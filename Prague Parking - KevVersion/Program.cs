@@ -105,11 +105,9 @@ class Garage
         }
         while (true)
         {
-            Console.WriteLine("Choose a type of the vehicle from below."
-                +"\nCAR or MC");
+            Console.WriteLine("Choose a type of the vehicle from below.\nCAR or MC");
             try
             {
-                userInput = Console.ReadKey(true);
                 newVehicleType = Console.ReadLine();
             }
             catch(Exception ex)
@@ -162,8 +160,9 @@ class Garage
             }
         }
         Console.WriteLine();
-        Console.WriteLine("The vehicle is now in the system"
-            +"\nPress any key to continue...");
+        Console.WriteLine("\nThe vehicle is now in the system, \n\n Press any key to continue...");
+        Console.ReadKey();
+        Console.Clear();
     }
     private void RemoveVehicle()
     {
@@ -172,7 +171,7 @@ class Garage
 
         Console.Clear();
         Console.WriteLine("----- Remove Customer -----");
-        foreach (CustomersVehicle vehicle in pLot)
+        /*foreach (CustomersVehicle vehicle in pLot)
         {
             pLotNum++;
             if(vehicle == null)
@@ -183,9 +182,9 @@ class Garage
             {
                 Console.WriteLine("Lotnumber {0}: {1}", pLotNum, vehicle.PlateNum);
             }
-        }
-        Console.WriteLine("Choose a lotnumber for the \n" +
-            "vehicle to be removed.");
+        *///}
+        //Console.WriteLine("Choose a lotnumber for the vehicle to be removed:"); 
+        Console.WriteLine("Type regestration number for the vehicle to be removed:");
         // User input
         while (true)
         {
@@ -240,6 +239,8 @@ class Garage
         }
         Console.WriteLine();
         Console.WriteLine("Press any key to continue...");
+        Console.ReadKey();
+        Console.Clear();
     }
     private void FindVehicle()
     {
@@ -301,7 +302,8 @@ class Garage
         }
         Console.WriteLine();
         Console.WriteLine("Press any key to continue...");
-        Console.ReadKey(true);
+        Console.ReadKey();
+        Console.Clear();
     }
 }
 class Vehicles
