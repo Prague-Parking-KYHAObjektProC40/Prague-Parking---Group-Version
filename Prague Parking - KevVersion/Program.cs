@@ -1,17 +1,17 @@
-﻿class CustomersVehicle // vehicle
+﻿class CustomersVehicle
 {
     private string plateNum;
     private string vehicleType;
     private int ticketLot;
-    private DateTime enterTime;
-    private DateTime leaveTime;
+    //private DateTime enterTime;
+    //private DateTime leaveTime;
     public CustomersVehicle(string _plateNum, string _vehicleType, int _ticketLot)
     {
         this.PlateNum = _plateNum;
         this.VehicleType = _vehicleType;
         this.TicketLot = _ticketLot;
-        this.EnterTime = enterTime;
-        this.leaveTime = leaveTime;
+        //this.EnterTime = enterTime;
+        //this.leaveTime = leaveTime;
     }
     public string PlateNum
     {
@@ -28,7 +28,7 @@
         get { return ticketLot; }
         set { ticketLot = value; }
     }
-    public DateTime EnterTime
+    /*public DateTime EnterTime
     {
         get { return enterTime; }
         set { enterTime = value; }
@@ -37,24 +37,21 @@
     {
         get { return leaveTime; }
         set { leaveTime = value; }
-    }
+    }*/
 }
 class Garage
 {
     CustomersVehicle[] pLot = new CustomersVehicle[100];
-    public string[] limitPlateNum = new string[10];
-    int overTimePrice = 5;
     public void Run()
     {
         int menyVal;
-        Console.Clear();
-        Console.WriteLine("<<<<<<<<<<<<<<<<<<<<¤>>>>>>>>>>>>>>>>>>>>" //20st. var sin sida. bara för att komma ihåg
-            + "\n<<     Welcome to our luxury garage    >>"
-            + "\n<<     Current vehicle:" + pLot.Length + "               >>"
-            + "\n<<<<<<<<<<<<<<<<<<<<¤>>>>>>>>>>>>>>>>>>>>");
-        Console.WriteLine();
-        do
+        while (true)
         {
+            Console.WriteLine("<<<<<<<<<<<<<<<<<<<<¤>>>>>>>>>>>>>>>>>>>>" //20st. var sin sida. bara för att komma ihåg
+                + "\n<<     Welcome to our luxury garage    >>"
+               // + "\n<<     Current spaces:" + pLot.Length + "              >>" Här är önskad funktion 1 där man kan förbärttra
+                + "\n<<<<<<<<<<<<<<<<<<<<¤>>>>>>>>>>>>>>>>>>>>");
+            Console.WriteLine();
             Console.WriteLine("Please choose from the menu options"
                 + "\n1: Add New Customer"
                 + "\n2: Remove Customer"
@@ -77,20 +74,17 @@ class Garage
                     FindVehicle();
                     break;
                 case 0:
-                    menyVal = 0;
-                    break;
+                    return;
                 default:
                     Console.WriteLine("Oopsi Daisy. Something went wrong. Please try again!");
                     break;
             }
         }
-        while (menyVal != 0);
     }
     private void AddVehicle()
     {
         string newPlateNum = "";
         string newVehicleType = "";
-        DateTime newDate = DateTime.Now;
         int newTicketLot = 0;
         ConsoleKeyInfo userInput;
 
@@ -112,20 +106,18 @@ class Garage
         while (true)
         {
             Console.WriteLine("Choose a type of the vehicle from below."
-                +"\nCar = Z"
-                +"\nMotorcycle = X");
+                +"\nCAR or MC");
             try
             {
                 userInput = Console.ReadKey(true);
-                newVehicleType = userInput.Key.ToString();
+                newVehicleType = Console.ReadLine();
             }
             catch(Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
-            if (newVehicleType == "Z" || newVehicleType == "X")
+            if (newVehicleType == "CAR" || newVehicleType == "MC")
             {
-                
                 break;
             }
             else
