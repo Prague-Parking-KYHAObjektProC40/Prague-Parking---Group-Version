@@ -1,4 +1,4 @@
-﻿class CustomersVehicle
+﻿class CustomersVehicle // vehicle
 {
     private string plateNum;
     private string vehicleType;
