@@ -44,7 +44,7 @@ class Garage
     CustomersVehicle[] pLot = new CustomersVehicle[100];
     public void Run()
     {
-        int menyVal;
+        
         while (true)
         {
             Console.WriteLine("<<<<<<<<<<<<<<<<<<<<¤>>>>>>>>>>>>>>>>>>>>" //20st. var sin sida. bara för att komma ihåg
@@ -58,10 +58,11 @@ class Garage
                 + "\n3: View Lot"
                 + "\n4: Find Vehicle"
                 + "\n0: Exit Program");
-            menyVal = int.Parse(Console.ReadLine());
+
+            string menyVal = Console.ReadLine();
             switch (menyVal)
             {
-                case 1:
+                case "1":
                     {
                         string newPlateNum = "";
                         string newVehicleType = "";
@@ -70,45 +71,62 @@ class Garage
 
                         Console.Clear();
                         Console.WriteLine("----- Add New Customer -----");
-
+      
                         Console.WriteLine("\nPlease write the plate number of the vehicle.");
                         newPlateNum = Console.ReadLine();
 
+                        // Check if the input is empty/null
+                        if (string.IsNullOrEmpty(newPlateNum))
+                        {
+                            Console.WriteLine("You enterd No plate number entered. Returnd to Menu");
+                            continue; // Exit the method
+                        }
+
+
                         Console.WriteLine("Choose a type of the vehicle from below.\nCAR or MC");
-                        newVehicleType = Console.ReadLine();
+                        newVehicleType = Console.ReadLine().ToUpper();
 
                         if (newVehicleType == "CAR" || newVehicleType == "MC")
                         {
-                            break;
-                        }
-                        else
-                        {
-                            Console.WriteLine("That is out of range, please try again");
-                        }
 
-                        while (true)
-                        {
-                            try
+                            // Generate a new ticket number for each customer
+                            int currentTicketNumber = 0;  // Start with 0 so the first ticket is 1
+                            const int maxTicketNumber = 999;  // Max value for ticket number
+
+                          currentTicketNumber++;
+
+                           
+                            // try
+
+                            
+
+                            //Console.Write("Please write the ticket number, from 1 to 100: FG ");
+                            //newTicketLot = Convert.ToInt32(Console.ReadLine());
+                            //if (newTicketLot > 100 || newTicketLot < 0)
+
+                            if (currentTicketNumber > maxTicketNumber)
                             {
-                                Console.Write("Please write the ticket number, from 1 to 100: ");
-                                newTicketLot = Convert.ToInt32(Console.ReadLine());
-                                if (newTicketLot > 100 || newTicketLot < 0)
-                                {
-                                    Console.WriteLine("Please choose the from 1 to 100");
-                                }
-                                else
-                                {
-                                    break;
-                                }
+                                // Återställ till 1 om max är uppnått
+                                currentTicketNumber = 1;
+
                             }
-                            catch (FormatException)
-                            {
-                                Console.WriteLine("Please write a number.");
-                            }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine(ex.Message);
-                            }
+                                // Assign the generated ticket number to newTicketLot
+                                newTicketLot = currentTicketNumber;
+
+                                    //Console.WriteLine("Please choose the from 1 to 100");
+                               
+
+                                // Display the new ticket number for the customer
+                                Console.WriteLine($"New ticket for customer: {currentTicketNumber}");
+
+                            //catch (FormatException)
+                            //{
+                            //Console.WriteLine("Please write a number.");
+                            //}
+                           // catch (Exception ex)
+                            //{
+                                //Console.WriteLine(ex.Message);
+                            //}
                         }
                         for (int i = 0; i < pLot.Length - 1; i++)
                         {
@@ -117,18 +135,22 @@ class Garage
                                 pLot[i] = new CustomersVehicle(newPlateNum, newVehicleType, newTicketLot);
                                 break;
                             }
-                            else
+
+                        else
                             {
-                                continue;
+                                Console.WriteLine("Try CAR or MC again please to add vehicle");
                             }
+
                         }
                         Console.WriteLine();
                         Console.WriteLine("\nThe vehicle is now in the system, \n\n Press any key to continue...");
                         Console.ReadKey();
                         Console.Clear();
                         }
+
                         break;
-                case 2:
+
+                case "2":
                     {
                         int pLotNum = 0;
                         int index = -1;
@@ -182,10 +204,11 @@ class Garage
                             "the parking lot {1} is now free to use.", pLot[index].PlateNum, index + 1);
                         pLot[index] = null;
                         Console.WriteLine("\nPress any key to continue...");
-                        Console.ReadKey(true);
+                        Console.ReadKey();
+                        Console.Clear();
                     }
                         break;
-                case 3:
+                case "3":
                     {
                         Console.Clear();
                         Console.WriteLine("----- Current vehicle parked -----");
@@ -208,7 +231,7 @@ class Garage
                         Console.Clear();
                     }
                     break;
-                case 4:
+                case "4":
                     {
                         Console.Clear();
                         Console.WriteLine("----- Find vehicle -----");
@@ -219,18 +242,16 @@ class Garage
                             try
                             {
                                 findVehicle = Convert.ToInt32(Console.ReadLine());
-                                if (findVehicle > pLot.Length)
-                                {
-                                    Console.WriteLine("Please write the ticket number, from 1 to 100.");
-                                }
-                                else if (findVehicle < 0)
-                                {
-                                    Console.WriteLine("Please write the ticket number, from 1 to 100:");
+
+                                if  (findVehicle < 1 || findVehicle > 999)  // Kolla om biljetten är mellan 1 och 999
+                                    {
+                                    Console.WriteLine("Please write the ticket number, from 1 to 999.");
                                 }
                                 else
                                 {
                                     break;
                                 }
+
                             }
                             catch (FormatException)
                             {
@@ -238,7 +259,7 @@ class Garage
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine(ex.Message);
+                                Console.WriteLine(ex.Message); // Övriga undantag
                             }
                         }
                         int ticketFound = 0;
@@ -246,17 +267,15 @@ class Garage
                         {
                             if (vehicle == null)
                             {
-                                continue;
+                                continue; // Hoppa över tomma platser
                             }
-                            else if (vehicle.TicketLot == ticketFound)
+                            else if (vehicle.TicketLot == ticketFound) // Kontrollera om biljettnumret matchar
                             {
-                                Console.WriteLine(vehicle.PlateNum);
-                                ticketFound++;
+                                Console.WriteLine($"Vehicle found: {vehicle.PlateNum}, Type: {vehicle.VehicleType}, Ticket: {vehicle.TicketLot}");
+                                ticketFound++; // Räkna antalet funna fordon
                             }
-                            else
-                            {
-                                continue;
-                            }
+
+                        // Kontrollera om några fordon hittades
                         }
                         if (ticketFound == 0)
                         {
@@ -264,15 +283,16 @@ class Garage
                         }
                         else
                         {
-                            Console.WriteLine("\nYou got {0} matches on your search.", ticketFound);
+                            Console.WriteLine($"\nYou found {ticketFound} vehicle(s) matching the ticket number.");
                         }
-                        Console.WriteLine();
+
+                        // Väntar på att användaren trycker på valfri tangent innan programmet fortsätter
                         Console.WriteLine("Press any key to continue...");
                         Console.ReadKey();
                         Console.Clear();
                     }
                     break;
-                case 0:
+                case "0":
                     return;
                 default:
                     Console.WriteLine("Oopsi Daisy. Something went wrong. Please try again!");
@@ -288,7 +308,7 @@ class Vehicles
     {
         var parkgarage = new Garage();
         parkgarage.Run();
-        Console.Write("Press any key to continue...");
+        Console.Write("class Vehicles text - Press any key to continue...");
         Console.ReadKey(true);
     }
 }

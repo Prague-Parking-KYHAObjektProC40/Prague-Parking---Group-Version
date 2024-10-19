@@ -127,7 +127,7 @@ class Garage
         {
             try
             {
-                Console.Write("Please write the ticket number, from 1 to 100: ");
+                Console.Write("Please write the ticket number, from 1 to 100:");
                 newTicketLot = Convert.ToInt32(Console.ReadLine());
                 if (newTicketLot > 100 || newTicketLot < 0)
                 {
@@ -287,7 +287,7 @@ class Garage
                 Console.WriteLine(vehicle.PlateNum);
                 ticketFound++;
             }
-            else
+            else 
             {
                 continue;
             }
