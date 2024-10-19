@@ -5,7 +5,9 @@ VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prague Parking - KevVersion", "Prague Parking - KevVersion\Prague Parking - KevVersion.csproj", "{E9CBC27A-0F5D-4AB5-9543-614252D3DA54}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prague Parking - Kev - List", "Prague Parking - Kev - List\Prague Parking - Kev - List.csproj", "{399A0C46-0D10-450D-8BF1-415CD42C6A3F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prague Parking - Kev - List", "Prague Parking - Kev - List\Prague Parking - Kev - List.csproj", "{399A0C46-0D10-450D-8BF1-415CD42C6A3F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clean-Version", "Clean-Version\Clean-Version.csproj", "{7E63E5E2-7F53-48F4-8871-EC7AE0F008B6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{399A0C46-0D10-450D-8BF1-415CD42C6A3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{399A0C46-0D10-450D-8BF1-415CD42C6A3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{399A0C46-0D10-450D-8BF1-415CD42C6A3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E63E5E2-7F53-48F4-8871-EC7AE0F008B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E63E5E2-7F53-48F4-8871-EC7AE0F008B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E63E5E2-7F53-48F4-8871-EC7AE0F008B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E63E5E2-7F53-48F4-8871-EC7AE0F008B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
