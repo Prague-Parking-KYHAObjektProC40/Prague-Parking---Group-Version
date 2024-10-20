@@ -95,6 +95,37 @@ class Program
                     }
                     break;
 
+
+                case "5":
+                    Console.Clear();
+                    Console.WriteLine("----- Move Vehicle to New Lot -----");
+                    Console.WriteLine("Enter the registration number of the vehicle you want to move:");
+                    string moveInput = Console.ReadLine().ToUpper();
+
+                    if (storage.Exists(moveInput))
+                    {
+                        // Find the current lot of the vehicle
+                        (string vehicletype, int currentLot) = storage.GetVehicleTypeAndLot(moveInput);
+
+                        // Find an empty lot
+                        int newLot = storage.FindEmptySpot();
+
+                        if (newLot != -1)
+                        {
+                            // Move the vehicle to the new lot
+                            storage.MoveVehicle(moveInput, currentLot, newLot);
+                        }
+                        else
+                        {
+                            Console.WriteLine("No empty lot available to move the vehicle.");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("No vehicle found with the given registration number.");
+                    }
+                    break;
+
                 case "0":
                     Console.WriteLine("Exiting program...");
                     running = false;
@@ -249,7 +280,7 @@ class Storage
     }
 
     // Find an empty spot for a car
-    private int FindEmptySpot()
+    public int FindEmptySpot()
     {
         for (int i = 0; i < pLot.Length; i++)
         {
@@ -294,6 +325,23 @@ class Storage
         }
     }
 
+    public void MoveVehicle(string regNumber, int currentLot, int newLot)
+    {
+        if (vehicles.ContainsKey(regNumber))
+        {
+            for (int i = 0; i < pLot.Length; i++)
+            {
+                if (pLot[i] != null && pLot[i].PlateNum.Contains(regNumber))
+                {
+                    pLot[newLot] = pLot[i];
+                    pLot[i] = null;
+                    Console.WriteLine($"{pLot[newLot].VehicleType} with registration number '{regNumber}' moved from lot {currentLot + 1} to lot {newLot + 1}.");
+                    break;
+                }
+            }
+        }
+    }
+
     public string GetStatus()
     {
         int availableSpaces = 0;
@@ -322,3 +370,4 @@ public class CustomersVehicle
         this.TicketLot = ticketLot;
     }
 }
+
