@@ -6,7 +6,7 @@ class Program
     static void Main()
     {
         CustomersVehicle[] pLot = new CustomersVehicle[100];
-        Storage storage = new Storage();
+        Storage storage = new Storage(pLot); // Pass the parking lot to Storage class
 
         bool running = true;
 
@@ -14,13 +14,12 @@ class Program
         {
             Console.WriteLine("<<<<<<<<<<<<<<<<<<+>>>>>>>>>>>>>>>>>>");
             Console.WriteLine("<<  Welcome to our luxury garage   >>");
-            Console.WriteLine("<<                                 >>");
             Console.WriteLine($"<< Current spaces: {storage.GetStatus()}  >>");
             Console.WriteLine("<<<<<<<<<<<<<<<<<<+>>>>>>>>>>>>>>>>>>");
             Console.WriteLine("Please choose from the menu options"
                  + "\n1: Add New Customer"
                  + "\n2: Remove Customer"
-                 + "\n3: View Lot"
+                 + "\n3: View Current Vehicles Parked"
                  + "\n4: Find Vehicle"
                  + "\n0: Exit Program");
 
@@ -39,13 +38,11 @@ class Program
 
                     if (addInput == "CAR")
                     {
-                        storage.AddCars(regNumber); // Add car to storage
-                        Console.WriteLine($"Car with reg number '{regNumber}' added.");
+                        storage.AddCars(regNumber);
                     }
                     else if (addInput == "MC")
                     {
-                        storage.AddMCs(regNumber); // Add motorcycle to storage
-                        Console.WriteLine($"Motorcycle with reg number '{regNumber}' added.");
+                        storage.AddMCs(regNumber);
                     }
                     else
                     {
@@ -56,7 +53,6 @@ class Program
                 case "2":
                     Console.Clear();
                     Console.WriteLine("----- Remove a Customer -----");
-
                     Console.WriteLine("Enter registration number to remove vehicle\nType 'EXIT' to return:");
                     string removeInput = Console.ReadLine().ToUpper();
 
@@ -65,20 +61,7 @@ class Program
 
                     if (storage.Exists(removeInput))
                     {
-                        string vehicleType = storage.GetVehicleType(removeInput);
-
-                        if (vehicleType == "CAR" && storage.RemoveCars(removeInput))
-                        {
-                            Console.WriteLine($"Car with registration number '{removeInput}' removed.");
-                        }
-                        else if (vehicleType == "MC" && storage.RemoveMCs(removeInput))
-                        {
-                            Console.WriteLine($"Motorcycle with registration number '{removeInput}' removed.");
-                        }
-                        else
-                        {
-                            Console.WriteLine("Error occurred while removing the vehicle.");
-                        }
+                        storage.RemoveVehicle(removeInput);
                     }
                     else
                     {
@@ -89,18 +72,7 @@ class Program
                 case "3":
                     Console.Clear();
                     Console.WriteLine("----- Current vehicles parked -----");
-                    for (int plotNum = 0; plotNum < pLot.Length; plotNum++)
-                    {
-                        var vehicle = pLot[plotNum];
-                        if (vehicle == null)
-                        {
-                            Console.WriteLine($"Lot {plotNum + 1}: This parking lot is empty");
-                        }
-                        else
-                        {
-                            Console.WriteLine($"Lot {plotNum + 1}: {vehicle.PlateNum}, {vehicle.VehicleType}, Ticket Lot: {vehicle.TicketLot}");
-                        }
-                    }
+                    storage.ViewLot();
                     Console.WriteLine("Press any key to continue...");
                     Console.ReadKey();
                     Console.Clear();
@@ -111,10 +83,11 @@ class Program
                     Console.WriteLine("Enter the registration number to find the vehicle:");
                     string searchInput = Console.ReadLine().ToUpper();
 
-                    if (storage.Exists(searchInput))
+                    (string vehicleType, int lot) = storage.GetVehicleTypeAndLot(searchInput);
+
+                    if (vehicleType != null)
                     {
-                        string vehicleType = storage.GetVehicleType(searchInput);
-                        Console.WriteLine($"Vehicle found: {vehicleType} with registration number '{searchInput}'.");
+                        Console.WriteLine($"Vehicle found: {vehicleType} with registration number '{searchInput}' in lot {lot}.");
                     }
                     else
                     {
@@ -157,101 +130,186 @@ class Program
 // Define Storage Class
 class Storage
 {
-    private double totalSpace = 100;
-    public double AvailableSpace { get; private set; }
-    public Item Car { get; private set; }
-    public Item MC { get; private set; }
-
+    private CustomersVehicle[] pLot;
     private Dictionary<string, string> vehicles = new Dictionary<string, string>(); // regNumber -> vehicleType
 
-    public Storage()
+    public Storage(CustomersVehicle[] pLot)
     {
-        AvailableSpace = totalSpace;
-        Car = new Item("Car", 1, 100);
-        MC = new Item("MC", 0.5, 200);
+        this.pLot = pLot;
     }
 
     public void AddCars(string regNumber)
     {
-        if (!vehicles.ContainsKey(regNumber) && AvailableSpace >= Car.SpacePerItem)
+        if (!vehicles.ContainsKey(regNumber))
         {
-            vehicles[regNumber] = "CAR";
-            AvailableSpace -= Car.SpacePerItem;
-            Console.WriteLine($"Car with reg number '{regNumber}' added.");
+            int spot = FindEmptySpot();
+            if (spot != -1)
+            {
+                pLot[spot] = new CustomersVehicle(regNumber, "CAR", spot + 1);
+                vehicles.Add(regNumber, "CAR");
+                Console.WriteLine($"Car with reg number '{regNumber}' added to spot {spot + 1}.");
+            }
+            else
+            {
+                Console.WriteLine("No available space to add a car.");
+            }
         }
         else
         {
-            Console.WriteLine("Not enough space or vehicle already exists.");
+            Console.WriteLine("Vehicle with this registration number already exists.");
         }
     }
 
     public void AddMCs(string regNumber)
     {
-        if (!vehicles.ContainsKey(regNumber) && AvailableSpace >= MC.SpacePerItem)
+        if (!vehicles.ContainsKey(regNumber))
         {
-            vehicles[regNumber] = "MC";
-            AvailableSpace -= MC.SpacePerItem;
-            Console.WriteLine($"Motorcycle with reg number '{regNumber}' added.");
+            int spot = FindSpotForMC();
+            if (spot != -1)
+            {
+                if (pLot[spot] == null) // If the spot is empty, add the first MC
+                {
+                    pLot[spot] = new CustomersVehicle(regNumber, "MC", spot + 1);
+                }
+                else if (pLot[spot].VehicleType == "MC1" || pLot[spot].VehicleType == "MC") // Add a second MC to the lot
+                {
+                    pLot[spot].PlateNum += $" & {regNumber}";
+                    pLot[spot].VehicleType = "MC2"; // Mark second MC
+                }
+
+                vehicles.Add(regNumber, "MC");
+                Console.WriteLine($"Motorcycle with reg number '{regNumber}' added to spot {spot + 1}.");
+            }
+            else
+            {
+                Console.WriteLine("No available space to add a motorcycle.");
+            }
         }
         else
         {
-            Console.WriteLine("Not enough space or vehicle already exists.");
+            Console.WriteLine("Vehicle with this registration number already exists.");
         }
     }
 
-    public bool RemoveCars(string regNumber)
+    // Remove a vehicle by registration number
+    public void RemoveVehicle(string regNumber)
     {
-        if (vehicles.ContainsKey(regNumber) && vehicles[regNumber] == "CAR")
+        if (vehicles.ContainsKey(regNumber))
         {
-            AvailableSpace += Car.SpacePerItem;
-            vehicles.Remove(regNumber);
-            return true;
+            for (int i = 0; i < pLot.Length; i++)
+            {
+                if (pLot[i] != null && (pLot[i].PlateNum.Contains(regNumber)))
+                {
+                    Console.WriteLine($"{pLot[i].VehicleType} with registration number '{regNumber}' removed from spot {i + 1}.");
+
+                    // If it's two MCs, just remove the correct one
+                    if (pLot[i].VehicleType == "MC2")
+                    {
+                        pLot[i].PlateNum = pLot[i].PlateNum.Replace($" & {regNumber}", "");
+                        pLot[i].VehicleType = "MC1"; // Reset back to single MC
+                    }
+                    else
+                    {
+                        pLot[i] = null; // Remove the car or single MC
+                    }
+
+                    vehicles.Remove(regNumber);
+                    break;
+                }
+            }
         }
-        return false;
     }
 
-    public bool RemoveMCs(string regNumber)
-    {
-        if (vehicles.ContainsKey(regNumber) && vehicles[regNumber] == "MC")
-        {
-            AvailableSpace += MC.SpacePerItem;
-            vehicles.Remove(regNumber);
-            return true;
-        }
-        return false;
-    }
-
+    // Check if a vehicle exists by registration number
     public bool Exists(string regNumber)
     {
         return vehicles.ContainsKey(regNumber);
     }
 
-    public string GetVehicleType(string regNumber)
+    // Get the vehicle type and lot by registration number
+    public (string, int) GetVehicleTypeAndLot(string regNumber)
     {
-        return vehicles.ContainsKey(regNumber) ? vehicles[regNumber] : null;
+        for (int i = 0; i < pLot.Length; i++)
+        {
+            if (pLot[i] != null && pLot[i].PlateNum.Contains(regNumber))
+            {
+                // Return only the matching MC or vehicle type for that registration
+                if (pLot[i].VehicleType == "MC2" && pLot[i].PlateNum.Contains(regNumber))
+                {
+                    return ("MC", i + 1);
+                }
+                else if (pLot[i].VehicleType == "MC1" || pLot[i].VehicleType == "MC")
+                {
+                    return ("MC", i + 1);
+                }
+                return (pLot[i].VehicleType, i + 1);
+            }
+        }
+        return (null, -1); // Vehicle not found
+    }
+
+    // Find an empty spot for a car
+    private int FindEmptySpot()
+    {
+        for (int i = 0; i < pLot.Length; i++)
+        {
+            if (pLot[i] == null)
+            {
+                return i;
+            }
+        }
+        return -1; // No empty spot available
+    }
+
+    // Find a spot for a motorcycle (either an empty spot or one with only one motorcycle)
+    private int FindSpotForMC()
+    {
+        for (int i = 0; i < pLot.Length; i++)
+        {
+            if (pLot[i] == null || pLot[i].VehicleType == "MC" || pLot[i].VehicleType == "MC1") // Check if there's room for 2nd MC
+            {
+                return i;
+            }
+        }
+        return -1; // No spot available
+    }
+
+    // View the parking lot (with separate MC1 and MC2)
+    public void ViewLot()
+    {
+        for (int i = 0; i < pLot.Length; i++)
+        {
+            if (pLot[i] != null)
+            {
+                if (pLot[i].VehicleType == "MC2") // If two MCs are in the same spot
+                {
+                    string[] mcPlates = pLot[i].PlateNum.Split('&');
+                    Console.WriteLine($"Lot {i + 1}: MC1 with reg number {mcPlates[0].Trim()}, MC2 with reg number {mcPlates[1].Trim()}");
+                }
+                else
+                {
+                    Console.WriteLine($"Lot {i + 1}: {pLot[i].VehicleType} with reg number {pLot[i].PlateNum}");
+                }
+            }
+        }
     }
 
     public string GetStatus()
     {
-        return $"Available Space: {AvailableSpace}";
+        int availableSpaces = 0;
+        for (int i = 0; i < pLot.Length; i++)
+        {
+            if (pLot[i] == null || (pLot[i].VehicleType == "MC" && !pLot[i].PlateNum.Contains("&"))) // Account for single MC spaces
+            {
+                availableSpaces++;
+            }
+        }
+        return $"Available: {availableSpaces} / {pLot.Length}";
     }
 }
 
-class Item
-{
-    public string Name { get; }
-    public double SpacePerItem { get; }
-    public int MaxCount { get; }
-
-    public Item(string name, double spacePerItem, int maxCount)
-    {
-        Name = name;
-        SpacePerItem = spacePerItem;
-        MaxCount = maxCount;
-    }
-}
-
-class CustomersVehicle
+// Define the CustomersVehicle class
+public class CustomersVehicle
 {
     public string PlateNum { get; set; }
     public string VehicleType { get; set; }
@@ -259,8 +317,8 @@ class CustomersVehicle
 
     public CustomersVehicle(string plateNum, string vehicleType, int ticketLot)
     {
-        PlateNum = plateNum;
-        VehicleType = vehicleType;
-        TicketLot = ticketLot;
+        this.PlateNum = plateNum;
+        this.VehicleType = vehicleType;
+        this.TicketLot = ticketLot;
     }
 }
