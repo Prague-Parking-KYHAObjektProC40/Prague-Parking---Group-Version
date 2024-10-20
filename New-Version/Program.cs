@@ -43,25 +43,43 @@ class Program
                     Console.WriteLine("----- Add New Customer -----");
 
 
-                    // Method to get a valid registration number from the user
 
-                    string regNumber = "";
+                    string EXIT = "";
+                    string regNumber ="";
 
-                    Console.Write("Enter a registration number (1-10 characters, no spaces Type 'EXIT' to return:):");
-                    regNumber = Console.ReadLine();
-
-                    if (regNumber == "EXIT")
+                    Console.Write("First we need a registration number (1-10 characters use ENTER to continue or Type 'EXIT' to return:):");
+                    EXIT = Console.ReadLine().ToUpper();
+                   
+                    if (EXIT == "EXIT") // If "EXIT" is entered, return to the previous menu
                     {
                         return;
                     }
+                    regNumber = GetValidRegistrationNumber(); //  Get valid registration number
 
-                    Console.WriteLine("Enter 'CAR' to add a car or 'MC' to add a motorcycle ");
-
+                      Console.WriteLine("Enter 'CAR' to add a car or 'MC' to add a motorcycle ");
                     string addInput = Console.ReadLine().ToUpper();
 
+                    // Method to get a valid registration number (10 characters)
+                    static string GetValidRegistrationNumber()
+                    {
+                        while (true)
+                        {
+                            Console.WriteLine("Pleas now enter the registration number ( Min 1 character Max 10 characters): ");
+                            string regNumber = Console.ReadLine();
 
-                    // Check if it's between 1 and 10 characters and does not contain spaces
-                    if (regNumber.Length >= 1 && regNumber.Length <= 10 && !regNumber.Contains(" "))
+                            if (regNumber.Length >= 1 && regNumber.Length <= 10 && !regNumber.Contains(" "))
+                            {
+                                return regNumber; // Valid registration number
+                            }
+                            else
+                            {
+                                Console.WriteLine("Invalid registration number. It must be exactly 1 to 10 characters.");
+                            }
+                        }
+                    }
+                    
+                  
+
                     {
 
                         if (addInput == "CAR")
@@ -109,16 +127,19 @@ class Program
 
                     //Remove new or use //newPlateNum = Console.ReadLine(); ??
 
-                    Console.WriteLine("Enter 'CAR' to remove a car or 'MC' to remove a motorcycle"
+                    Console.WriteLine("Enter registration to remove vehicle"
                                         + "\nType 'EXIT' to return:");
                     string removeInput = Console.ReadLine().ToUpper();
 
-                    if (removeInput == "CAR")
+                    Console.Write("Enter a registration number (1-10 characters, no spaces Type 'EXIT' to return:):");
+                    regNumber = Console.ReadLine();
+
+                    if (removeInput == regNumber)
                     {
                         storage.RemoveCars(1);
                     }
 
-                    else if (removeInput == "MC")
+                    else if (removeInput == regNumber)
                     {
                         storage.RemoveMCs(1);
                     }
@@ -134,7 +155,7 @@ class Program
                     }
                     else
                     {
-                        Console.WriteLine("Invalid input. Please enter 'CAR', 'MC', or 'EXIT'.");
+                        Console.WriteLine("Invalid input. Please enter registration number, or 'EXIT'.");
                     }
 
 
